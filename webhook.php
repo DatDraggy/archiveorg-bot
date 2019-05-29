@@ -3,8 +3,6 @@ require_once(__DIR__ . '/funcs.php');
 require_once(__DIR__ . '/config.php');
 require_once(__DIR__ . '/vendor/autoload.php');
 
-use GuzzleHttp\Client;
-
 $response = file_get_contents('php://input');
 $data = json_decode($response, true);
 $dump = print_r($data, true);
@@ -18,13 +16,45 @@ if (isset($data['message']['text'])) {
 if (!empty($data['message']['entities'])) {
   foreach ($data['message']['entities'] as $entity) {
     if ($entity['type'] == 'url') {
-      mail($config['mail'], 'Debug', mb_substr($text, $entity['offset'], $entity['length']));
+      $url = mb_substr($text, $entity['offset'], $entity['length']);
+      if (archiveUrl($url)) {
+        $archived[] = 'https://web.archive.org/99999999999999/' . $url;
+        logUrl($url, $chatId,true);
+      } else {
+        $notArchived[] = $url;
+        logUrl($url, $chatId, false);
+      }
+
     }
   }
+  if (!empty($archived)) {
+    sendMessage($chatId, 'Successfully archived following sites: 
+' . implode('\n', $archived));
+  }
+  if (!empty($notArchived)) {
+    sendMessage($chatId, 'Failed to archive following sites: 
+' . implode("\n", $notArchived));
+  }
 } else if (!empty($data['message']['caption_entities'])) {
-  foreach ($data['message']['caption_entities'] as $entity) {
+  foreach ($data['message']['entities'] as $entity) {
     if ($entity['type'] == 'url') {
-      mail($config['mail'], 'Debug', mb_substr($text, $entity['offset'], $entity['length']));
+      $url = mb_substr($text, $entity['offset'], $entity['length']);
+      if (archiveUrl($url)) {
+        $archived[] = 'https://web.archive.org/99999999999999/' . $url;
+        logUrl($url, $chatId,true);
+      } else {
+        $notArchived[] = $url;
+        logUrl($url, $chatId, false);
+      }
+
     }
+  }
+  if (!empty($archived)) {
+    sendMessage($chatId, 'Successfully archived following sites: 
+' . implode('\n', $archived));
+  }
+  if (!empty($notArchived)) {
+    sendMessage($chatId, 'Failed to archive following sites: 
+' . implode("\n", $notArchived));
   }
 }

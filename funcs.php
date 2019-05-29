@@ -25,3 +25,23 @@ function makeApiRequest($method, $data) {
   }
   return json_decode($response->getBody(), true);
 }
+
+function logUrl($url, $userId, $success) {
+  $file = 'log.txt';
+  file_put_contents($file, $userId . '|' . $url . '|' . $success, FILE_APPEND);
+}
+
+function archiveUrl($url) {
+  $ch = curl_init();
+  curl_setopt($ch, CURLOPT_URL, 'https://web.archive.org/save/' . $url);
+  curl_exec($ch);
+  if (curl_error($ch)) {
+    $error_msg = curl_error($ch);
+  }
+  curl_close($ch);
+  if (isset($error_msg)) {
+    mail($config['mail'], 'Error', 'Archive Bot | ' . $error_msg);
+    return false;
+  }
+  return true;
+}
