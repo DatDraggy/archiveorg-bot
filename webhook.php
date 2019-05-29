@@ -35,26 +35,4 @@ if (!empty($data['message']['entities'])) {
     sendMessage($chatId, 'Failed to archive following sites: 
 ' . implode("\n", $notArchived));
   }
-} else if (!empty($data['message']['caption_entities'])) {
-  foreach ($data['message']['entities'] as $entity) {
-    if ($entity['type'] == 'url') {
-      $url = mb_substr($text, $entity['offset'], $entity['length']);
-      if (archiveUrl($url)) {
-        $archived[] = 'https://web.archive.org/99999999999999/' . $url;
-        logUrl($url, $chatId,true);
-      } else {
-        $notArchived[] = $url;
-        logUrl($url, $chatId, false);
-      }
-
-    }
-  }
-  if (!empty($archived)) {
-    sendMessage($chatId, 'Successfully archived following sites: 
-' . implode('\n', $archived));
-  }
-  if (!empty($notArchived)) {
-    sendMessage($chatId, 'Failed to archive following sites: 
-' . implode("\n", $notArchived));
-  }
 }
