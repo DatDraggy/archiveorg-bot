@@ -28,7 +28,7 @@ function makeApiRequest($method, $data) {
 
 function logUrl($url, $userId, $success) {
   $file = 'log.txt';
-  file_put_contents($file, $userId . '|' . $url . '|' . $success, FILE_APPEND);
+  file_put_contents($file, $userId . '|' . $url . '|' . $success . "\n", FILE_APPEND);
 }
 
 function archiveUrl($url) {
