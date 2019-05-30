@@ -35,4 +35,12 @@ if (!empty($data['message']['entities'])) {
     sendMessage($chatId, 'Failed to archive following sites: 
 ' . implode("\n", $notArchived));
   }
+} else if (isset($data['message']['photo'])){
+  $photo = $data['message']['photo'][count($data['message']['photo']) - 1];
+  $fileId = $photo['file_id'];
+  $fileDetails = getFile($fileId);
+  $saveAs = explode('/', $fileDetails['file_path'], 2)[0] . '/' . $fileId . '.' . pathinfo($fileDetails['file_path'], PATHINFO_EXTENSION);
+  $fileUrl = downloadFile($config['savedIn'], $saveAs, $fileDetails['file_path']);
+  //TODO: Upload to image site
+  //TODO: Post link to archive.org
 }
