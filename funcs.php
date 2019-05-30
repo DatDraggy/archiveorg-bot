@@ -45,3 +45,16 @@ function archiveUrl($url) {
   }
   return true;
 }
+
+function downloadFile($path, $filePath, $origFilePath){
+  global $config;
+  $fullPath = $path . $filePath;
+  if (!file_exists(dirname($fullPath))) {
+    mkdir(dirname($fullPath), 0770, true);
+  }
+  if(!file_exists($fullPath)){
+    $url = 'https://api.telegram.org/file/bot'.$config['token'].'/'.$origFilePath;
+    file_put_contents($fullPath, fopen($url, 'r'));
+  }
+  return $config['mediaPath'] . $filePath;
+}
