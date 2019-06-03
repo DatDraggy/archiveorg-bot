@@ -36,6 +36,7 @@ if (!empty($data['message']['entities'])) {
 ' . implode("\n", $notArchived));
   }
 } else if (isset($data['message']['photo'])) {
+  mail($config['mail'], 'Debug', print_r($data,true));
   $photo = $data['message']['photo'][count($data['message']['photo']) - 1];
   $fileId = $photo['file_id'];
   $fileDetails = getFile($fileId);
