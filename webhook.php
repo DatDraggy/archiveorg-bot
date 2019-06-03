@@ -19,7 +19,7 @@ if (!empty($data['message']['entities'])) {
       $url = mb_substr($text, $entity['offset'], $entity['length']);
       if (archiveUrl($url)) {
         $archived[] = 'https://web.archive.org/99999999999999/' . $url;
-        logUrl($url, $chatId,true);
+        logUrl($url, $chatId, true);
       } else {
         $notArchived[] = $url;
         logUrl($url, $chatId, false);
@@ -35,12 +35,23 @@ if (!empty($data['message']['entities'])) {
     sendMessage($chatId, 'Failed to archive following sites: 
 ' . implode("\n", $notArchived));
   }
-} else if (isset($data['message']['photo'])){
+} else if (isset($data['message']['photo'])) {
   $photo = $data['message']['photo'][count($data['message']['photo']) - 1];
   $fileId = $photo['file_id'];
   $fileDetails = getFile($fileId);
   $saveAs = explode('/', $fileDetails['file_path'], 2)[0] . '/' . $fileId . '.' . pathinfo($fileDetails['file_path'], PATHINFO_EXTENSION);
   $fileUrl = downloadFile($config['savedIn'], $saveAs, $fileDetails['file_path']);
-  //TODO: Upload to image site
+
+  $uploader = new imgBbUploader($config['imgBBkey']);
+  $data = $uploader->upload($config['savedIn'] . $saveAs);
+  $url = $data['url'];
+  $deleteUrl = $data['delete_url'];
   //TODO: Post link to archive.org
+  if (archiveUrl($url)) {
+    $archived = 'https://web.archive.org/99999999999999/' . $url;
+    logUrl($url, $chatId, true, $deleteUrl);
+  }
+  sendMessage($chatId, 'Successfully archived the image: 
+' . $archived);
+
 }

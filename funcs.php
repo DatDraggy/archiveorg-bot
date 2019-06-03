@@ -26,9 +26,9 @@ function makeApiRequest($method, $data) {
   return json_decode($response->getBody(), true);
 }
 
-function logUrl($url, $userId, $success) {
+function logUrl($url, $userId, $success, $extra = '') {
   $file = 'log.txt';
-  file_put_contents($file, $userId . '|' . $url . '|' . $success . "\n", FILE_APPEND);
+  file_put_contents($file, $userId . '|' . $url . '|' . $success . '|' . $extra . "\n", FILE_APPEND);
 }
 
 function archiveUrl($url) {
@@ -46,15 +46,46 @@ function archiveUrl($url) {
   return true;
 }
 
-function downloadFile($path, $filePath, $origFilePath){
+function downloadFile($path, $filePath, $origFilePath) {
   global $config;
   $fullPath = $path . $filePath;
   if (!file_exists(dirname($fullPath))) {
     mkdir(dirname($fullPath), 0770, true);
   }
-  if(!file_exists($fullPath)){
-    $url = 'https://api.telegram.org/file/bot'.$config['token'].'/'.$origFilePath;
+  if (!file_exists($fullPath)) {
+    $url = 'https://api.telegram.org/file/bot' . $config['token'] . '/' . $origFilePath;
     file_put_contents($fullPath, fopen($url, 'r'));
   }
   return $config['mediaPath'] . $filePath;
+}
+
+function getFile($fileId) {
+  $data = array('file_id' => $fileId);
+  return makeApiRequest('getFile', $data);
+}
+
+class imgBBuploader {
+  private $key;
+
+  function __construct($key) {
+    $this->key = $key;
+  }
+
+  public function upload($imagePath) {
+    $apitoken = $this->key;
+    $image = file_get_contents($imagePath);
+    $encodedImage = base64_encode($image);
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'https://api.imgbb.com/1/upload?key=' . $apitoken);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    $data = array(
+      'image' => $encodedImage
+    );
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    $output = json_decode(curl_exec($ch), true);
+    curl_close($ch);
+    return $output['data'];
+  }
 }
