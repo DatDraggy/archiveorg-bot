@@ -23,7 +23,7 @@ function makeApiRequest($method, $data) {
     $body = $e->getResponse()->getBody();
     mail($config['mail'], 'Test', print_r($body->getContents(), true));
   }
-  return json_decode($response->getBody(), true);
+  return json_decode($response->getBody(), true)['result'];
 }
 
 function logUrl($url, $userId, $success, $extra = '') {
