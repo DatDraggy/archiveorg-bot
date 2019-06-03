@@ -37,12 +37,10 @@ if (!empty($data['message']['entities'])) {
   }
 } else if (isset($data['message']['photo'])) {
   mail($config['mail'], 'Debug', print_r($data,true));
-
-  mail($config['mail'], 'Debug', print_r($data['message']['photo'],true));
   $photo = $data['message']['photo'][count($data['message']['photo']) - 1];
-  mail($config['mail'], 'Debug', print_r($photo,true));
   $fileId = $photo['file_id'];
   $fileDetails = getFile($fileId);
+  mail($config['mail'], 'Debug', print_r($fileDetails,true));
   $saveAs = explode('/', $fileDetails['file_path'], 2)[0] . '/' . $fileId . '.' . pathinfo($fileDetails['file_path'], PATHINFO_EXTENSION);
   $fileUrl = downloadFile($config['savedIn'], $saveAs, $fileDetails['file_path']);
 
