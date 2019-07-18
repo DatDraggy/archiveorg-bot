@@ -18,6 +18,10 @@ if (!empty($data['message']['entities'])) {
   foreach ($data['message']['entities'] as $entity) {
     if ($entity['type'] == 'url') {
       $url = mb_substr($text, $entity['offset'], $entity['length']);
+      if (substr($url, '0', '4') !== 'http' && substr($url, '0', '5') !== 'https') {
+        $url = 'https://' . $url;
+        //No https? Sucks to be you. Add http:// yourself then. 
+      }
       if (archiveUrl($url)) {
         $archived[] = 'https://web.archive.org/99999999999999/' . $url;
         logUrl($url, $chatId, true);
