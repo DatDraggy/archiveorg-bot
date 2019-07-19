@@ -20,7 +20,7 @@ if (!empty($data['message']['entities'])) {
       $url = mb_substr($text, $entity['offset'], $entity['length']);
       if (substr($url, '0', '4') !== 'http' && substr($url, '0', '5') !== 'https') {
         $url = 'https://' . $url;
-        //No https? Sucks to be you. Add http:// yourself then. 
+        //No https? Sucks to be you. Add http:// yourself then.
       }
       if (archiveUrl($url)) {
         $archived[] = 'https://web.archive.org/99999999999999/' . $url;
@@ -51,7 +51,6 @@ if (!empty($data['message']['entities'])) {
   $data = $uploader->upload($config['savedIn'] . $saveAs);
   $url = $data['url'];
   $deleteUrl = $data['delete_url'];
-  //TODO: Post link to archive.org
   if (archiveUrl($url)) {
     $archived = 'https://web.archive.org/99999999999999/' . $url;
     logUrl($url, $chatId, true, $deleteUrl);
