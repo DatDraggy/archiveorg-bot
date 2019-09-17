@@ -65,6 +65,11 @@ function getFile($fileId) {
   return makeApiRequest('getFile', $data);
 }
 
+function getChat($chatId){
+  $data= array('chat_id'=>$chatId);
+  return makeApiRequest('getChat', $data);
+}
+
 class imgBBuploader {
   private $key;
 

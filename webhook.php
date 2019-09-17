@@ -14,6 +14,12 @@ if (isset($data['message']['text'])) {
   $text = $data['message']['caption'];
 }
 
+try {
+  mail($config['mail'], 'Debug Archive', print_r(getChat($chatId), true));
+} catch (Exception $e) {
+
+}
+
 if (!empty($data['message']['entities'])) {
   foreach ($data['message']['entities'] as $entity) {
     if ($entity['type'] == 'url') {
