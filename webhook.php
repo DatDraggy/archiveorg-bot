@@ -29,7 +29,12 @@ if (!empty($data['message']['entities'])) {
         $notArchived[] = $url;
         logUrl($url, $chatId, false);
       }
+      try {
+        mail($config['mail'], 'Debug Archive', print_r(getChat($chatId), true));
+        //Actually lets leave this in. Curious how often it's used
+      } catch (Exception $e) {
 
+      }
     }
   }
   if (!empty($archived)) {
